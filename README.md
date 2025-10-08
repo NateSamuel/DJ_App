@@ -5,10 +5,13 @@ The application enables users to load, play, mix, and manipulate two audio track
 ## Video Link Below:
 https://youtu.be/IifzSzUEb-E
 
-## Image of DJ App
 <p align="center">
   <img src="./Images/FinalDJAppImage.jpg" alt="FinalDJAppImage" width="400"/>
 </p>
+<p align="center">
+  The DJ App has a "Tron-Inspired" Layout.
+</p>
+
 ## Breakdown Of Features
 
 ### Audio Loading and Playback
