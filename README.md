@@ -1,143 +1,61 @@
-# DJ_App
-This DJ app was created with C++ and JUCE to create mixes with multiple tracks.
+## Summary
 
-Report
-R1 –
-Please see an overview of the basic functionalities of the project that are satisfied in R1:
-R1A – In order to be able to load the audio files in the audio players, there are three classes we have made
-specifically. MainComponent, DJAudioPlayer, and DeckGUI. The DeckGUI class called in MainComponent has
-two separate instances, the left and right players. Each player, player1 and player2 can load tracks by using the
-LoadURL function that is enacted when the button::listener for the load button is clicked. When the user
-chooses the file, the URL is sent to the loadURL function in the DJAudioPlayer class, which creates an input
-stream of information that is given to the transportSource. There is also the ‘isInterestedInFileDrag’ and
-‘filesDropped’ functions in DeckGUI, that deal with if the file wants to be dragged and then the URL is loaded
-into the player.
-R1B – To play two tracks at the same time, the play button on each player is pressed, which is picked up by the
-button::listeners in DeckGUIs and the start() function is called from DeckGUIs into the DJAudioPlayers. This calls
-start() on the transportSources and then filters can be added to it before being sent back to the
-mainComponent that mixes it together with the other track that is in the separate player. This is thed
-mixerSource that is the title of the juce MixerAudioSource class.
-R1C – The way the two players tracks can be mixed on a basic level is by using the volSlider. When the thumb
-on the volSlider is moved, the slider::listener is called in DeckGUI, which notifies the sliderValueChanged
-function. This calls the ‘DJAudioPlayer::setGain’ function with the value on the slider being put in as the
-parameter. This enacts setGain on the transportSource, altering it by the value which reduces or adds to the
-volume.
-R1D – The way the two players tracks can be altered is by using the position and speed sliders. These work in a
-similar way to R1C but for the position slider it enacts setPosition on the transport source and for the speed
-slider it enacts setResamplingRatio on the resampleSource.
-Extra: We also began to create a playlistComponent by using the tableListBox class to input columns and rows,
-using the getNumRows, the paintRowBackground and the paintCell functions. We began to implement a load
-button for each row by using a refreshComponentForCell, but this was not progressed any further than
-implementing the button design itself. For part of R3 I have developed this further.
-We implemented a waveformDisplay as well, which was called upon loading up a URL into a player. The data,
-called in DeckGUI loadURL is given to the AudioThumbnail class, titled audioThumb which splits the data of the
-track up into scaled down waveforms, that can be painted with ‘drawChannel’ in the paint component
-function.
-R2-
-The aim of the graphic design of the project is
-to make it a futuristic ‘Tron’ inspired UI. There
-is a scene in ‘Tron Legacy’ where Daft Punk
-play as DJs, and so I wanted to create a DJ
-deck that would suit the feeling of this
-moment in the movie. I used similar colouring
-of the city and futuristically styled dials to do
-this.
-Reference from Tron
-legacy.
-R2A
-To change the main graphics of the application I
-have created two new classes, the
-BackgroundGraphics Class, and the
-OtherLookAndFeel class.
-The BackgroundGraphics Class deals with the
-background of the area above the playlist
-component. It is therefore called within the MainComponent to not be built twice in the DeckGUI. In it I used
-ColourGradient::horizontal to create the gradient effect for the dark blue to mid blue base background and the
-light blue to white background that features where the frequency visualiser is. I also added in a white lined
-Path class as a border to separate the two functions and give the project more of the ‘Tron’ feeling.
-I wanted the design to be mirrored so that it was more symmetrical, so in DeckGUI::resized() I created if
-statements to use as the parameters of the setBounds for the width positions of each DeckGUI element. Each
-DeckGUI called a different instance of this. I did this for the Turntable as well, within its own class.
-For the components that were in DeckGUI that were required to be replicated, I used the DeckGUI to
-implement them as slider classes for a LinearSlider and a RotarySlider. Using the OtherLookAndFeel class I
-created, I was able to implement my own graphics onto the different sliders. I used this tutorial for reference
-only when creating this class:
-https://docs.juce.com/master/tutorial_look_and_feel_customisation.html
-For the linear slider I drew the thumb track as a pale blue rectangle, and then the thumb slider itself was drawn
-as a small rectangular noggin that moved on drag. In the DeckGUI I also added a function named
-setSliderStyles() that went into more detail about what information I wanted on the sliders, adding labels to
-title them where appropriate.
-For the PlaylistComponent and Waveform Display I enacted minor changes to the colours and style, but I also
-included ImageButtons to the load, play and pause below the WaveFormDisplay. I used imageButtons in the
-‘loadButton’, the ‘load into player 1 and 2’ buttons, and the ‘delete’ button in the PlaylistComponent that
-highlighted on hover. I used this video as reference for adding the imageButtons:
-https://www.youtube.com/watch?v=g_6UKygCp-0&t=14s.
-R2BFor this part I created two new sliders, the bass and treble slider. These were using the IIRFilterAudioSource
-filterSource that was called in the DJAudioPlayer class, initially in the prepare to play, and then in the functions
-‘setBass’ and ‘setTreble’ I created. Slider listeners in the DeckGUI tell the sliderValueChanged when the value
-has changed, and then the values are passed to the DJAudioPlayer::setBass or setTreble to change the
-amplitude at the frequency of the treble/bass amount. The graphics for the rotary slider or ‘dial’ is created
-within the OtherLookAndFeel class, which creates Paths that are concentric ‘addCentredArc’ arcs. The angle is
-passed in as a parameter, which is altered when the DeckGUI::sliderValueChanged is called, and this rotates the
-rotarySlider.
-R3 –
-For this part, I used inspiration from the VirtualDJ application: https://www.virtualdj.com/
-Within it I saw three items that I wanted to implement into this feature within my app. Please see the three
-items below I added and the reasoning and workings behind implementing them:
-Reference image for
-‘Tron’ slider and
-graphics inspiration.
-Turntable –
-In a lot of DJ applications that I found online there was a turntable feature where you could ‘scratch’ the record
-forwards or backwards. This is something I really wanted to understand to fully visualise a dj app.
-I thought the best way of doing it was to create a class that contained the functionality, and called to the
-OtherLookAndFeel class to get the graphics of the ‘record’ that would spin around.
-After implementing the graphics of the record, the first part of the implementation was to work out how to
-make the record start to spin when the play button was clicked, and then stop when the pause button was
-clicked. I needed to use the functionality of the DeckGUI to do this, by creating a flag that said on the
-playbutton’s buttonClicked, that the turntable was ready to start rotating. When the pause button was clicked
-then the flag told the turntable class to stop rotating.
-I then needed to create the ‘scratching’ effect. This was done by creating an invisible rotary slider in the
-DeckGUI that I fixed to the value 1.5. If the rotary slider was moved left then the value would change to 1, if the
-value was moved right then the value was changed to 2. At each scratch that the user would do, I would then
-force the slider back to the 1.5 position so that it was easier to navigate each time the user wanted to scratch. I
-then created if statements to deal with the two scenarios where the slider value was set to 1 and 2. For
-scenario 1 the if statement changed the setPositionRelative function in the DJAudioPlayer to the current value -
-0.01 and in scenario 2 it changed it to +0.02. They also altered two bool’s in the Turntable classes
-‘pushRecordBackward’ and ‘pushRecordForward’ to true, which then animated the records to rotate the record
-forward slightly or backward in if statements in the Turntable::timerCallback class.
-Frequency Visualiser –
-To see the effects of the knobs and dials that I had created on the screen being changed, I wanted to create a
-visualiser. On the VirtualDJ application it used a bar that uses the levels at the bass and treble meter at a
-specific point on the frequency, but what I wanted to show was the full spectrum of the frequency as moving
-bars.
-I found a tutorial from the Juce website which was a ‘spectrum analyser’
-https://docs.juce.com/master/tutorial_spectrum_analyser.html. This used the FFT from the Juce::dsp module
-that I added (which will be required for the project to work), and created a visualisation of the amplitude over
-Turntable for
-scratching.
-Visualisers for
-base and treble
-filter effects.
-PlaylistComponent
-fully realised.
-the frequency. I implemented it using the tutorial for guidance, but it wasn’t quite what I wanted, as it showed
-the spectrum as a series of jagged lines. In place of this, in the ‘drawFrame’ function I changed it so that it was
-a series of bars/rectangles that had a gradient colour that were mapped to the amplitude along the frequency
-axis. The effect worked well.
-Playlist Component –
-To develop the playlistComponent I first needed to work out how to implement a load button. First, button id’s
-were assigned in the refreshComponentForCell to each button. On buttonClicked I used an if statement that
-flagged the specific button id, and used the FileBrowserComponent class and used launchAsync on the
-fChooser to load the URL. I then converted it into a standard string along with getting the filename, and pushed
-that data along with a bool operator ‘isTrackLoaded ‘ to say whether a file’s URL is loaded or not into a Class
-vector called TrackLibrary that I created. This is a data structure that contains 6 rows of data for tracks to be
-implemented into the playlist.
-I then created a load into player 1 button and load into player 2 button, which had ids set in the
-refreshComponentForCell. These were then called similarly in buttonclicked, and if they were clicked it would
-send the URL from the trackLibrary vector class into the specified player in the DeckGUI::loadFileToDeck, which
-then loads it in the DJAudioPlayer:: loadURL. This only happens if the bool ‘isTrackLoaded’ in the trackLibrary
-on that specific row is also true.
-After this I implemented a delete button which worked in the same way as the other tracks but would
-overwrite the trackLibrary vector with the standard template, with the bool operator ‘isTrackLoaded ‘ set back
-to false, and the URLs and the track names removed.
+The application enables users to load, play, mix, and manipulate two audio tracks simultaneously. In addition to these features, it includes a custom “Tron”-inspired user interface, adjustable bass and treble controls, a visual frequency analyser, a realistic turntable scratching effect, and a playlist management system. Together, these elements combine to deliver a complete and immersive DJ experience.
+
+## Video Link Below:
+https://youtu.be/IifzSzUEb-E
+
+## Breakdown Of Features
+
+### Audio Loading and Playback
+
+To enable audio playback, three core classes were created: the MainComponent, DJAudioPlayer, and DeckGUI. Each DeckGUI instance, representing the left and right players, allows users to load tracks via a dedicated Load button. When the button is clicked, the file’s URL is sent to the DJAudioPlayer::loadURL() function, which generates an input stream that is passed to the transport source for playback. The application also supports drag-and-drop functionality through the isInterestedInFileDrag() and filesDropped() functions in the DeckGUI class, which handle file detection and loading directly into the player interface.
+
+Each player includes a Play button, which is connected to a button::listener in DeckGUI. When pressed, the listener triggers the start() function within the DJAudioPlayer class, which activates playback on the transport source. The two tracks are then mixed together using JUCE’s MixerAudioSource class, allowing both decks to play and blend audio simultaneously.
+
+Volume control for each deck is implemented through a volume slider, or volSlider, which notifies the sliderValueChanged() function whenever it is adjusted. This function calls DJAudioPlayer::setGain() with the new value, dynamically altering the gain on the transport source and adjusting the deck’s volume output in real time.
+
+Playback position and speed can also be modified through two additional sliders. The position slider controls playback location by calling setPosition() on the transport source, while the speed slider modifies playback tempo by calling setResamplingRatio() on the resample source. These controls allow users to fine-tune playback and synchronization between tracks.
+
+### Playlist and Waveform Display
+
+The playlist feature was implemented using JUCE’s TableListBox class, providing a structured interface for track management. Within the PlaylistComponent, the functions getNumRows(), paintRowBackground(), and paintCell() handle table layout and rendering. A Load button was added to each row through refreshComponentForCell(), though at this initial stage it was primarily focused on design and placement, with functionality expanded later in development.
+
+A waveform display was also implemented to give users a visual representation of each track. This feature uses JUCE’s AudioThumbnail class, referred to as audioThumb, which processes the audio file data into a scaled-down waveform. Once loaded, the waveform is drawn using the drawChannel() function within the component’s paint method, providing a visual indication of the track’s structure and amplitude.
+
+### User Interface and Visual Design
+
+The visual design of the project was heavily inspired by the film Tron: Legacy, particularly the Daft Punk DJ scene. The goal was to capture the futuristic, neon-lit aesthetic associated with the film’s digital world. To achieve this, the user interface employs gradients of cool blue tones, glowing accents, and symmetrical arrangements.
+
+Two new classes were created to manage the project’s visual design: BackgroundGraphics and OtherLookAndFeel. The BackgroundGraphics class manages the visual layout above the playlist component, using horizontal colour gradients that fade from dark to light blue to create depth and vibrancy. White Path lines were added to separate different sections of the interface, reinforcing the “Tron” aesthetic. To ensure visual balance, mirrored symmetry was introduced in DeckGUI::resized(), where conditional statements adjust component positions to maintain a consistent layout across both decks.
+
+The OtherLookAndFeel class is responsible for customizing the appearance of interface components. Linear sliders were redesigned with light blue rectangular tracks and small thumb indicators that move along the track during interaction. Rotary sliders were drawn using concentric arcs through the addCentredArc function, giving them a dial-like appearance. These visual updates were combined with descriptive labels added via a new setSliderStyles() function in DeckGUI, improving usability and presentation.
+
+Buttons within the interface, including Load, Play, Pause, and Delete, were redesigned as ImageButtons that highlight when hovered over, providing dynamic feedback to user interaction. The PlaylistComponent and WaveformDisplay were also refined with complementary colour schemes to maintain consistency across the interface. The design choices and methods were influenced by tutorials from the JUCE documentation and community resources.
+
+### Audio Effects and Filtering
+
+In addition to playback and mixing controls, two new rotary sliders were introduced to control bass and treble levels. These use JUCE’s IIRFilterAudioSource class, integrated into the DJAudioPlayer. Two new functions, setBass() and setTreble(), were created to manage these filters. Slider listeners in DeckGUI detect when the bass or treble sliders are adjusted and call these functions to modify the amplitude of the relevant frequency bands. The rotary sliders are visually represented by rotating arcs created in the OtherLookAndFeel class, giving users feedback as they adjust tonal balance.
+
+### Advanced Features
+
+To further enhance the realism of the application, a **Turntable class** was developed to simulate vinyl scratching. When playback begins, the turntable graphic spins to mimic a real record in motion. This rotation stops when the Pause button is pressed, managed through a flag system linked to the DeckGUI’s play and pause button states. The scratching functionality was implemented using an invisible rotary slider fixed at a value of 1.5. Moving the slider left decreases the value to 1, shifting playback slightly backward, while moving it right increases it to 2, shifting playback forward. After each scratch action, the slider automatically resets to its neutral 1.5 position for smoother control. This interaction also affects the Turntable class’s pushRecordForward and pushRecordBackward booleans, which visually animate the record’s movement through the Turntable::timerCallback() function.
+
+Another major addition was the **Frequency Visualiser**, created using JUCE’s Fast Fourier Transform (FFT) module from the DSP library. The visualiser analyses the incoming audio signal and displays the amplitude spectrum across the frequency range. Based on JUCE’s Spectrum Analyser tutorial, the implementation was adapted to replace the default jagged-line style with smoother vertical bars, each representing different frequencies. These bars use colour gradients that correspond to amplitude, resulting in a vibrant and dynamic visualization that reacts in real time to changes in bass and treble levels.
+
+The **PlaylistComponent** was also significantly developed beyond its initial implementation. Each row in the playlist now includes buttons to load a track, send it to Player 1 or Player 2, and delete it. A new TrackLibrary class was created to store track data, including the file name, URL, and a boolean variable indicating whether the track is currently loaded. When a load button is pressed, the application uses the FileBrowserComponent and launchAsync() to select a file and store its data in the TrackLibrary. The “Load to Player” buttons send the selected track’s URL to the DeckGUI::loadFileToDeck() function, which then passes it to DJAudioPlayer::loadURL(). The delete button resets the track’s information in the TrackLibrary, removing it from the playlist.
+
+
+### References
+
+JUCE Documentation – https://docs.juce.com/
+
+JUCE Look and Feel Customisation Tutorial – https://docs.juce.com/master/tutorial_look_and_feel_customisation.html
+
+JUCE Spectrum Analyser Tutorial – https://docs.juce.com/master/tutorial_spectrum_analyser.html
+
+JUCE Image Buttons Tutorial – https://www.youtube.com/watch?v=g_6UKygCp-0&t=14s
+
+VirtualDJ – https://www.virtualdj.com/
+
+Tron: Legacy (2010) – Visual and thematic inspiration
